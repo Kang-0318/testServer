@@ -148,6 +148,41 @@ app.patch("/boards/:id/title", (req, res) => {
 })
 
 
+
+app.patch("/boards/:id/content", (req, res) => {
+
+    try {
+        const boardId = Number(req.params.id)
+        const index = boards.findIndex(b => b.id === boardId)
+
+        if (index === -1) {
+            res.status(404).json({ message: "게시글 컨텐츠 수정 중 아이디가 없음" })
+        }
+        const { content } = req.body
+
+
+
+        if (typeof content !== 'string' || content.trim() === "") {
+            return res.status(400).json({
+                message: "컨텐츠는 비어있지 않은 문자열 이어야 합니다."
+            })
+        }
+
+        boards[index] = {
+            ...boards[index],
+            content: content.trim()
+        }
+
+        res.status(200).json({ message: "게시글 컨텐츠 수정하기 완료", board: boards[index] })
+
+
+    } catch (error) {
+        console.error("게시글 제목 수정 중 오류", error)
+        res.status(500).json({ message: "서버 오류" })
+    }
+})
+
+
 app.get("/",(req,res)=>{
     res.send("Hello World")
 })
